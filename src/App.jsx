@@ -1,121 +1,70 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+import { useState, useEffect } from 'react'
+import {obtenerMesas} from './services/mesasService'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [mesas, setMesas] = useState([])
+  const [error, setError] = useState(null)
+  const [cargando, setCargando] = useState(true)
+
+  useEffect(() => {
+    async function cargarMesas() {
+      try {
+        const data = await obtenerMesas()
+        console.log('Mesas desde Supabase:', data)
+        setMesas(data)
+      } catch (error) {
+        console.error('Error conectando con Supabase:', error.message)
+        setError(error.message)
+      } finally {
+        setCargando(false)
+      }
+    }
+
+    cargarMesas()
+  }, [])
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
+    <main className="app">
+      <section className="welcome-card">
+
+        <h1>Sistema de Reservas de Mesas</h1>
+        <h2>Comidas Rápidas The Gordo</h2>
+
+        <p>
+          Prueba de conexión con supabase, consultando la tabla 'mesas'
+        </p>
+
+        {cargando && <p className="status">Cargando mesas...</p>}
+
+        {error && (
+          <p className="error">
+            Error al conectar con Supabase: {error}
           </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
+        )}
+
+        {!cargando && !error && (
+          <>
+            <p className="status">
+              Mesas cargadas desde Supabase: <strong>{mesas.length}</strong>
+            </p>
+
+            <div className="tables-grid">
+              {mesas.map((mesa) => (
+                <article className="table-card" key={mesa.id}>
+                  <h3>Mesa {mesa.numero}</h3>
+                  <p>Capacidad: {mesa.capacidad} personas</p>
+                  <p>Ubicación: {mesa.ubicacion}</p>
+                  <span className={`table-status ${mesa.estado}`}>
+                    {mesa.estado}
+                  </span>
+                </article>
+              ))}
+            </div>
+          </>
+        )}
       </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+    </main>
   )
 }
 
