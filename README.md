@@ -1,16 +1,24 @@
-# React + Vite
+Restaurante TheGordo
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este proyecto implica crear una pagina web para gestionar la reserva de mesas del restaurante "TheGordo".
 
-Currently, two official plugins are available:
+El sistema incluye:
+° Módulo del cliente: visualización del salón, selección de la mesa, formulario de reserva y confirmación.
+° Módulo de administrador: gestión de mesas, horarios y reservas; bloqueo de mesas.
+° Integración con Supabase para almacenamiento de datos.
+° Despliegue en Vercel y control de versiones en GitHub
+° Interfaz responsiva para uso en computadores y dispositivos móviles.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Que NO incluye el sistema:
+° Procesamiento de pagos en línea (no se cobrará por la reseva en esta versión).
+° Sistema de fidealización o puntos para clientes frecuentes.
+° Integración con redes sociales o plataformas de entrega a domicilio.
+° Aplicación móvil nativa (iOS o Android).
+° Gestión de inventario de cocina o sistema POS.
 
-## React Compiler
+Patrón arquitectonico:
+El sistema seguirá una arquitectura cliente-servidor de dos capas, con separación lcara entre frontend (interfaz de usuario) y el backend con servicio (Supabase).
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Proyecto realizado por:
+Santiago Sanchez Ribero - 01220371063
+Juan Pablo Santoyo Diaz - 01220371042
