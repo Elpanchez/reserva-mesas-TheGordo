@@ -5,7 +5,7 @@
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
-  background: #363636;
+  background: #e82a2a;
   color: #222;
 }
 
@@ -79,7 +79,7 @@ p {
   padding: 20px;
   border: 1px solid #e5e5e5;
   border-radius: 14px;
-  background: #fafafa;
+  background: #f8e239;
 }
 
 .table-card h3 {
@@ -103,16 +103,16 @@ p {
 }
 
 .table-status.disponible {
-  background: #e8f5e9;
-  color: #2e7d32;
+  background: #18ce28;
+  color: #ffffff;
 }
 
 .table-status.ocupada {
-  background: #fff3e0;
-  color: #ef6c00;
+  background: #ce3131;
+  color: #ffffff;
 }
 
 .table-status.bloqueada {
-  background: #ffebee;
-  color: #c62828;
+  background: #8a8a8a;
+  color: #ffffff;
 }
