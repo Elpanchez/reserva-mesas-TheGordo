@@ -397,6 +397,7 @@ a {
   font-size: 15px;
   background: rgba(255, 255, 255, 0.9);
   outline: none;
+  color: black;
 }
 
 .form-group input:focus,
