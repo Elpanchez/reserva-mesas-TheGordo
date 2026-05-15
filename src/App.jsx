@@ -1,70 +1,40 @@
-import { useState, useEffect } from 'react'
-import {obtenerMesas} from './services/mesasService'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+
+import ClientLayout from './components/layout/ClientLayout.jsx'
+import AdminLayout from './components/layout/AdminLayout.jsx'
+
+import HomePage from './pages/client/Home.jsx'
+import ReservationPage from './pages/client/Reserva.jsx'
+import ReservationSuccessPage from './pages/client/ReservaExistosa.jsx'
+
+import LoginPage from './pages/admin/Login.jsx'
+import DashboardPage from './pages/admin/Dashboard.jsx'
+import MesasPage from './pages/admin/Mesas.jsx'
+import ReservasPage from './pages/admin/Reservas.jsx'
+import HorariosPage from './pages/admin/Horarios.jsx'
+
 import './App.css'
 
 function App() {
-  const [mesas, setMesas] = useState([])
-  const [error, setError] = useState(null)
-  const [cargando, setCargando] = useState(true)
-
-  useEffect(() => {
-    async function cargarMesas() {
-      try {
-        const data = await obtenerMesas()
-        console.log('Mesas desde Supabase:', data)
-        setMesas(data)
-      } catch (error) {
-        console.error('Error conectando con Supabase:', error.message)
-        setError(error.message)
-      } finally {
-        setCargando(false)
-      }
-    }
-
-    cargarMesas()
-  }, [])
-
   return (
-    <main className="app">
-      <section className="welcome-card">
+    <BrowserRouter>
+      <Routes>
+        <Route element={<ClientLayout />}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/reservar" element={<ReservationPage />} />
+          <Route path="/reserva-exitosa" element={<ReservationSuccessPage />} />
+        </Route>
 
-        <h1>Sistema de Reservas de Mesas</h1>
-        <h2>Comidas Rápidas The Gordo</h2>
+        <Route path="/admin/login" element={<LoginPage />} />
 
-        <p>
-          Prueba de conexión con supabase, consultando la tabla 'mesas'
-        </p>
-
-        {cargando && <p className="status">Cargando mesas...</p>}
-
-        {error && (
-          <p className="error">
-            Error al conectar con Supabase: {error}
-          </p>
-        )}
-
-        {!cargando && !error && (
-          <>
-            <p className="status">
-              Mesas cargadas desde Supabase: <strong>{mesas.length}</strong>
-            </p>
-
-            <div className="tables-grid">
-              {mesas.map((mesa) => (
-                <article className="table-card" key={mesa.id}>
-                  <h3>Mesa {mesa.numero}</h3>
-                  <p>Capacidad: {mesa.capacidad} personas</p>
-                  <p>Ubicación: {mesa.ubicacion}</p>
-                  <span className={`table-status ${mesa.estado}`}>
-                    {mesa.estado}
-                  </span>
-                </article>
-              ))}
-            </div>
-          </>
-        )}
-      </section>
-    </main>
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<DashboardPage />} />
+          <Route path="mesas" element={<MesasPage />} />
+          <Route path="reservas" element={<ReservasPage />} />
+          <Route path="horarios" element={<HorariosPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
 }
 
