@@ -187,7 +187,7 @@ function MesasPage() {
       }
     } catch (error) {
       setErrorFormulario(
-        'No se pudo eliminar la mesa. Es posible que tenga reservas asociadas.'
+          'No se puede eliminar esta mesa porque tiene reservas asociadas. Primero cancela o completa las reservas activas y luego elimina definitivamente las reservas no activas desde Gestión de reservas.'
       )
     }
   }

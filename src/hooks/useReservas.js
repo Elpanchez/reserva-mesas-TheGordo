@@ -7,6 +7,7 @@ import {
   crearReserva,
   cancelarReserva,
   completarReserva,
+  eliminarReserva,
 } from '../services/reservasService'
 
 export function useReservas(cargarAlIniciar = false) {
@@ -131,6 +132,23 @@ export function useReservas(cargarAlIniciar = false) {
     }
   }
 
+const eliminar = async (id) => {
+  try {
+    setError(null)
+
+    await eliminarReserva(id)
+
+    setReservas((reservasActuales) =>
+      reservasActuales.filter((reserva) => reserva.id !== id)
+    )
+
+    return true
+  } catch (error) {
+    setError(error.message)
+    throw error
+  }
+}
+
   useEffect(() => {
     if (cargarAlIniciar) {
       cargarReservas()
@@ -148,5 +166,6 @@ export function useReservas(cargarAlIniciar = false) {
     agregarReserva,
     cancelar,
     completar,
+    eliminar,
   }
 }

@@ -37,6 +37,7 @@ function ReservasPage() {
     cargarReservasPorFecha,
     cancelar,
     completar,
+    eliminar,
   } = useReservas(true)
 
   const [filtros, setFiltros] = useState(filtrosIniciales)
@@ -142,6 +143,28 @@ function ReservasPage() {
       setProcesandoId(null)
     }
   }
+
+  async function handleEliminarReserva(reserva) {
+  const confirmar = window.confirm(
+    `¿Seguro que deseas eliminar definitivamente la reserva de ${reserva.cliente_nombre}? Esta acción no se puede deshacer.`
+  )
+
+  if (!confirmar) return
+
+  try {
+    setProcesandoId(reserva.id)
+    setMensaje(null)
+    setErrorAccion(null)
+
+    await eliminar(reserva.id)
+
+    setMensaje('Reserva eliminada definitivamente.')
+  } catch (error) {
+    setErrorAccion(error.message)
+  } finally {
+    setProcesandoId(null)
+  }
+}
 
   return (
     <div className="admin-page">
@@ -319,9 +342,12 @@ function ReservasPage() {
                         )}
 
                         {reserva.estado !== ESTADOS_RESERVA.ACTIVA && (
-                          <span className="admin-muted">
-                            Sin acciones disponibles
-                          </span>
+                          <button className="admin-button admin-button--danger"
+                            type="button"
+                            disabled={procesandoId === reserva.id}
+                            onClick={() => handleEliminarReserva(reserva)}>  
+                            Eliminar
+                          </button>
                         )}
                       </div>
                     </td>

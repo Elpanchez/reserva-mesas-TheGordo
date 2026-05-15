@@ -129,3 +129,16 @@ export async function cancelarReserva(id) {
 export async function completarReserva(id) {
   return cambiarEstadoReserva(id, ESTADOS_RESERVA.COMPLETADA)
 }
+
+export async function eliminarReserva(id) {
+  const { error } = await supabase
+    .from('reservas')
+    .delete()
+    .eq('id', id)
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  return true
+}
