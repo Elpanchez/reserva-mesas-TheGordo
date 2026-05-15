@@ -11,7 +11,6 @@ function ClientLayout() {
 
         <nav>
           <Link to="/">Salón</Link>
-          <Link to="/reservar">Reservar</Link>
           <Link to="/admin/login">Admin</Link>
         </nav>
       </header>
