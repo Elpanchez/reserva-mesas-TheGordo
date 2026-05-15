@@ -11,8 +11,8 @@ function AdminLayout() {
   }
 
   async function handleGoToClientView() {
+    navigate('/', { replace: true })
     await logout()
-    navigate('/')
   }
 
   return (
