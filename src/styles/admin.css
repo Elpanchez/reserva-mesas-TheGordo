@@ -163,7 +163,7 @@
     flex-direction: column;
   }
 }
-
+/*horario**/
 .admin-checkbox {
   min-height: 42px;
   display: flex;
@@ -180,4 +180,35 @@
 .admin-checkbox input {
   width: 16px;
   height: 16px;
+}
+
+/*reserva**/
+.admin-form__grid--filters {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.admin-muted {
+  color: #777;
+  font-size: 13px;
+}
+
+.status-badge--activa {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-badge--cancelada {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.status-badge--completada {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+@media (max-width: 900px) {
+  .admin-form__grid--filters {
+    grid-template-columns: 1fr;
+  }
 }
