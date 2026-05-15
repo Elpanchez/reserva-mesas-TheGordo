@@ -163,3 +163,21 @@
     flex-direction: column;
   }
 }
+
+.admin-checkbox {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid #d6d6d6;
+  border-radius: 12px;
+  background: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.admin-checkbox input {
+  width: 16px;
+  height: 16px;
+}
