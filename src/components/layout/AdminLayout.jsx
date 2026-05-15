@@ -10,6 +10,11 @@ function AdminLayout() {
     navigate('/admin/login')
   }
 
+  async function handleGoToClientView() {
+    await logout()
+    navigate('/')
+  }
+
   return (
     <div className="admin-layout">
       <aside className="admin-sidebar">
@@ -19,14 +24,25 @@ function AdminLayout() {
         {user && <small>{user.email}</small>}
 
         <nav>
-          <Link to="/admin">Dashboard</Link>
+          <Link to="/admin">Inicio</Link>
           <Link to="/admin/mesas">Mesas</Link>
           <Link to="/admin/reservas">Reservas</Link>
           <Link to="/admin/horarios">Horarios</Link>
-          <Link to="/">Vista cliente</Link>
+
+          <button
+            className="admin-sidebar-button"
+            type="button"
+            onClick={handleGoToClientView}
+          >
+            Vista cliente
+          </button>
         </nav>
 
-        <button type="button" onClick={handleLogout}>
+        <button
+          className="admin-sidebar-button admin-sidebar-button--logout"
+          type="button"
+          onClick={handleLogout}
+        >
           Cerrar sesión
         </button>
       </aside>

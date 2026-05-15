@@ -212,3 +212,94 @@
     grid-template-columns: 1fr;
   }
 }
+
+/*dashboard**/
+.admin-home-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.admin-home-action {
+  display: grid;
+  gap: 10px;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.admin-home-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.12);
+}
+
+.admin-home-action span {
+  color: #b3261e;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.admin-home-action strong {
+  color: #222222;
+  font-size: 20px;
+}
+
+.admin-home-action p {
+  margin: 0;
+  color: #555555;
+  line-height: 1.4;
+}
+
+.admin-empty {
+  padding: 28px;
+  border: 1px dashed #cccccc;
+  border-radius: 16px;
+  background: #fafafa;
+  text-align: center;
+}
+
+.admin-empty h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.admin-empty p {
+  margin: 0;
+  color: #666666;
+}
+
+@media (max-width: 1000px) {
+  .admin-home-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+/*visitar vista cliente**/
+.admin-sidebar-button {
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.admin-sidebar-button:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.admin-sidebar-button--logout {
+  margin-top: 24px;
+  background: #b3261e;
+  text-align: center;
+}
+
+.admin-sidebar-button--logout:hover {
+  background: #922019;
+}
