@@ -1,27 +1,7 @@
-import { useEffect, useState } from 'react'
-import { obtenerMesas } from '../../services/mesasService'
+import { useMesas } from '../../hooks/useMesas'
 
 function HomePage() {
-  const [mesas, setMesas] = useState([])
-  const [cargando, setCargando] = useState(true)
-  const [error, setError] = useState(null)
-
-  useEffect(() => {
-    async function cargarMesas() {
-      try {
-        const data = await obtenerMesas()
-        console.log('Mesas desde Supabase:', data)
-        setMesas(data)
-      } catch (error) {
-        console.error(error)
-        setError(error.message)
-      } finally {
-        setCargando(false)
-      }
-    }
-
-    cargarMesas()
-  }, [])
+  const { mesas, cargando, error } = useMesas()
 
   return (
     <section>
@@ -33,7 +13,17 @@ function HomePage() {
       {error && <p>Error: {error}</p>}
 
       {!cargando && !error && (
-        <p>Mesas cargadas desde Supabase: {mesas.length}</p>
+        <>
+          <p>Mesas cargadas desde Supabase: {mesas.length}</p>
+
+          <ul>
+            {mesas.map((mesa) => (
+              <li key={mesa.id}>
+                Mesa {mesa.numero} - {mesa.capacidad} personas - {mesa.estado}
+              </li>
+            ))}
+          </ul>
+        </>
       )}
     </section>
   )
