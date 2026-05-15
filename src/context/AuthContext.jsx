@@ -8,7 +8,7 @@ import {
 
 const AuthContext = createContext(null)
 
-const SESSION_TIMEOUT_MS = 20 * 1000
+const SESSION_TIMEOUT_MS = 10 * 60 * 1000
 const LAST_ACTIVITY_KEY = 'admin_last_activity_at'
 
 function obtenerTimestampActual() {

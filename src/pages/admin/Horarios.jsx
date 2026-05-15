@@ -30,30 +30,37 @@ function HorariosPage() {
     eliminar,
   } = useHorarios()
 
-  const [formulario, setFormulario] = useState(estadoInicialFormulario)
-  const [horarioEditandoId, setHorarioEditandoId] = useState(null)
+  const [formularioCrear, setFormularioCrear] = useState(estadoInicialFormulario)
+  const [formularioEditar, setFormularioEditar] = useState(estadoInicialFormulario)
+  const [horarioEditando, setHorarioEditando] = useState(null)
+
   const [mensaje, setMensaje] = useState(null)
   const [errorFormulario, setErrorFormulario] = useState(null)
+  const [errorEdicion, setErrorEdicion] = useState(null)
   const [guardando, setGuardando] = useState(false)
+  const [guardandoEdicion, setGuardandoEdicion] = useState(false)
 
-  const estaEditando = Boolean(horarioEditandoId)
+  const modalEdicionAbierto = Boolean(horarioEditando)
 
-  function handleChange(event) {
+  function handleChangeCrear(event) {
     const { name, value, type, checked } = event.target
 
-    setFormulario((formularioActual) => ({
+    setFormularioCrear((formularioActual) => ({
       ...formularioActual,
       [name]: type === 'checkbox' ? checked : value,
     }))
   }
 
-  function limpiarFormulario() {
-    setFormulario(estadoInicialFormulario)
-    setHorarioEditandoId(null)
-    setErrorFormulario(null)
+  function handleChangeEditar(event) {
+    const { name, value, type, checked } = event.target
+
+    setFormularioEditar((formularioActual) => ({
+      ...formularioActual,
+      [name]: type === 'checkbox' ? checked : value,
+    }))
   }
 
-  function validarFormulario() {
+  function validarFormulario(formulario) {
     if (!formulario.dia_semana) {
       return 'Debes seleccionar un día de la semana.'
     }
@@ -73,48 +80,24 @@ function HorariosPage() {
     return null
   }
 
-  async function handleSubmit(event) {
-    event.preventDefault()
-
-    const errorValidacion = validarFormulario()
-
-    if (errorValidacion) {
-      setErrorFormulario(errorValidacion)
-      return
-    }
-
-    const horario = {
+  function prepararHorario(formulario) {
+    return {
       dia_semana: Number(formulario.dia_semana),
       hora_inicio: formulario.hora_inicio,
       hora_fin: formulario.hora_fin,
       activo: formulario.activo,
     }
-
-    try {
-      setGuardando(true)
-      setMensaje(null)
-      setErrorFormulario(null)
-
-      if (estaEditando) {
-        await editarHorario(horarioEditandoId, horario)
-        setMensaje('Horario actualizado correctamente.')
-      } else {
-        await agregarHorario(horario)
-        setMensaje('Horario creado correctamente.')
-      }
-
-      limpiarFormulario()
-    } catch (error) {
-      setErrorFormulario(error.message)
-    } finally {
-      setGuardando(false)
-    }
   }
 
-  function cargarHorarioParaEditar(horario) {
-    setHorarioEditandoId(horario.id)
+  function limpiarFormularioCrear() {
+    setFormularioCrear(estadoInicialFormulario)
+    setErrorFormulario(null)
+  }
 
-    setFormulario({
+  function abrirModalEditar(horario) {
+    setHorarioEditando(horario)
+
+    setFormularioEditar({
       dia_semana: String(horario.dia_semana),
       hora_inicio: formatearHora(horario.hora_inicio),
       hora_fin: formatearHora(horario.hora_fin),
@@ -122,7 +105,65 @@ function HorariosPage() {
     })
 
     setMensaje(null)
-    setErrorFormulario(null)
+    setErrorEdicion(null)
+  }
+
+  function cerrarModalEditar() {
+    setHorarioEditando(null)
+    setFormularioEditar(estadoInicialFormulario)
+    setErrorEdicion(null)
+  }
+
+  async function handleCrearHorario(event) {
+    event.preventDefault()
+
+    const errorValidacion = validarFormulario(formularioCrear)
+
+    if (errorValidacion) {
+      setErrorFormulario(errorValidacion)
+      return
+    }
+
+    try {
+      setGuardando(true)
+      setMensaje(null)
+      setErrorFormulario(null)
+
+      await agregarHorario(prepararHorario(formularioCrear))
+
+      setMensaje('Horario creado correctamente.')
+      limpiarFormularioCrear()
+    } catch (error) {
+      setErrorFormulario(error.message)
+    } finally {
+      setGuardando(false)
+    }
+  }
+
+  async function handleGuardarEdicion(event) {
+    event.preventDefault()
+
+    const errorValidacion = validarFormulario(formularioEditar)
+
+    if (errorValidacion) {
+      setErrorEdicion(errorValidacion)
+      return
+    }
+
+    try {
+      setGuardandoEdicion(true)
+      setMensaje(null)
+      setErrorEdicion(null)
+
+      await editarHorario(horarioEditando.id, prepararHorario(formularioEditar))
+
+      setMensaje('Horario actualizado correctamente.')
+      cerrarModalEditar()
+    } catch (error) {
+      setErrorEdicion(error.message)
+    } finally {
+      setGuardandoEdicion(false)
+    }
   }
 
   async function handleCambiarEstadoHorario(horario) {
@@ -160,8 +201,8 @@ function HorariosPage() {
       await eliminar(horario.id)
       setMensaje('Horario eliminado correctamente.')
 
-      if (horarioEditandoId === horario.id) {
-        limpiarFormulario()
+      if (horarioEditando?.id === horario.id) {
+        cerrarModalEditar()
       }
     } catch (error) {
       setErrorFormulario(error.message)
@@ -181,17 +222,17 @@ function HorariosPage() {
       </header>
 
       <section className="admin-card">
-        <h2>{estaEditando ? 'Editar horario' : 'Crear nuevo horario'}</h2>
+        <h2>Crear nuevo horario</h2>
 
-        <form className="admin-form" onSubmit={handleSubmit}>
+        <form className="admin-form" onSubmit={handleCrearHorario}>
           <div className="admin-form__grid">
             <div className="admin-field">
               <label htmlFor="dia_semana">Día de la semana</label>
               <select
                 id="dia_semana"
                 name="dia_semana"
-                value={formulario.dia_semana}
-                onChange={handleChange}
+                value={formularioCrear.dia_semana}
+                onChange={handleChangeCrear}
               >
                 <option value="">Selecciona un día</option>
 
@@ -209,8 +250,8 @@ function HorariosPage() {
                 id="hora_inicio"
                 name="hora_inicio"
                 type="time"
-                value={formulario.hora_inicio}
-                onChange={handleChange}
+                value={formularioCrear.hora_inicio}
+                onChange={handleChangeCrear}
               />
             </div>
 
@@ -220,8 +261,8 @@ function HorariosPage() {
                 id="hora_fin"
                 name="hora_fin"
                 type="time"
-                value={formulario.hora_fin}
-                onChange={handleChange}
+                value={formularioCrear.hora_fin}
+                onChange={handleChangeCrear}
               />
             </div>
 
@@ -233,8 +274,8 @@ function HorariosPage() {
                   id="activo"
                   name="activo"
                   type="checkbox"
-                  checked={formulario.activo}
-                  onChange={handleChange}
+                  checked={formularioCrear.activo}
+                  onChange={handleChangeCrear}
                 />
                 Horario activo
               </label>
@@ -257,22 +298,8 @@ function HorariosPage() {
               type="submit"
               disabled={guardando}
             >
-              {guardando
-                ? 'Guardando...'
-                : estaEditando
-                  ? 'Guardar cambios'
-                  : 'Crear horario'}
+              {guardando ? 'Guardando...' : 'Crear horario'}
             </button>
-
-            {estaEditando && (
-              <button
-                className="admin-button admin-button--secondary"
-                type="button"
-                onClick={limpiarFormulario}
-              >
-                Cancelar edición
-              </button>
-            )}
           </div>
         </form>
       </section>
@@ -325,7 +352,7 @@ function HorariosPage() {
                         <button
                           className="admin-button admin-button--secondary"
                           type="button"
-                          onClick={() => cargarHorarioParaEditar(horario)}
+                          onClick={() => abrirModalEditar(horario)}
                         >
                           Editar
                         </button>
@@ -354,6 +381,117 @@ function HorariosPage() {
           </div>
         )}
       </section>
+
+      {modalEdicionAbierto && (
+        <div className="admin-modal-backdrop" onClick={cerrarModalEditar}>
+          <div
+            className="admin-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="editar-horario-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="admin-modal__header">
+              <div>
+                <h2 id="editar-horario-title">Editar horario</h2>
+                <p>Modifica el día, el rango horario o el estado.</p>
+              </div>
+
+              <button
+                className="admin-modal__close"
+                type="button"
+                onClick={cerrarModalEditar}
+                aria-label="Cerrar modal"
+              >
+                ×
+              </button>
+            </div>
+
+            <form className="admin-form" onSubmit={handleGuardarEdicion}>
+              <div className="admin-form__grid">
+                <div className="admin-field">
+                  <label htmlFor="editar-dia-semana">Día de la semana</label>
+                  <select
+                    id="editar-dia-semana"
+                    name="dia_semana"
+                    value={formularioEditar.dia_semana}
+                    onChange={handleChangeEditar}
+                  >
+                    <option value="">Selecciona un día</option>
+
+                    {DIAS_SEMANA.map((dia) => (
+                      <option key={dia.value} value={dia.value}>
+                        {dia.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="admin-field">
+                  <label htmlFor="editar-hora-inicio">Hora de inicio</label>
+                  <input
+                    id="editar-hora-inicio"
+                    name="hora_inicio"
+                    type="time"
+                    value={formularioEditar.hora_inicio}
+                    onChange={handleChangeEditar}
+                  />
+                </div>
+
+                <div className="admin-field">
+                  <label htmlFor="editar-hora-fin">Hora de fin</label>
+                  <input
+                    id="editar-hora-fin"
+                    name="hora_fin"
+                    type="time"
+                    value={formularioEditar.hora_fin}
+                    onChange={handleChangeEditar}
+                  />
+                </div>
+
+                <div className="admin-field">
+                  <label htmlFor="editar-activo">Estado</label>
+
+                  <label className="admin-checkbox">
+                    <input
+                      id="editar-activo"
+                      name="activo"
+                      type="checkbox"
+                      checked={formularioEditar.activo}
+                      onChange={handleChangeEditar}
+                    />
+                    Horario activo
+                  </label>
+                </div>
+              </div>
+
+              {errorEdicion && (
+                <p className="admin-message admin-message--error">
+                  {errorEdicion}
+                </p>
+              )}
+
+              <div className="admin-modal__footer">
+                <button
+                  className="admin-button admin-button--secondary"
+                  type="button"
+                  onClick={cerrarModalEditar}
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  className="admin-button admin-button--primary"
+                  type="submit"
+                  disabled={guardandoEdicion}
+                >
+                  {guardandoEdicion ? 'Guardando...' : 'Guardar cambios'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

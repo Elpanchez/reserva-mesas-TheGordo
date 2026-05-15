@@ -4,6 +4,13 @@ export const ESTADOS_MESA = {
   BLOQUEADA: 'bloqueada',
 }
 
+export const ZONAS_MESA = [
+  { value: 'Zona ventana', label: 'Zona ventana' },
+  { value: 'Zona central', label: 'Zona central' },
+  { value: 'Zona familiar', label: 'Zona familiar' },
+  { value: 'Zona exterior', label: 'Zona exterior' },
+]
+
 export const ESTADOS_RESERVA = {
   ACTIVA: 'activa',
   CANCELADA: 'cancelada',

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useMesas } from '../../hooks/useMesas'
-import { ESTADOS_MESA } from '../../utils/constants'
+import { ESTADOS_MESA, ZONAS_MESA } from '../../utils/constants'
 
 const estadoInicialFormulario = {
   numero: '',
@@ -21,30 +21,37 @@ function MesasPage() {
     eliminar,
   } = useMesas()
 
-  const [formulario, setFormulario] = useState(estadoInicialFormulario)
-  const [mesaEditandoId, setMesaEditandoId] = useState(null)
+  const [formularioCrear, setFormularioCrear] = useState(estadoInicialFormulario)
+  const [formularioEditar, setFormularioEditar] = useState(estadoInicialFormulario)
+  const [mesaEditando, setMesaEditando] = useState(null)
+
   const [mensaje, setMensaje] = useState(null)
   const [errorFormulario, setErrorFormulario] = useState(null)
+  const [errorEdicion, setErrorEdicion] = useState(null)
   const [guardando, setGuardando] = useState(false)
+  const [guardandoEdicion, setGuardandoEdicion] = useState(false)
 
-  const estaEditando = Boolean(mesaEditandoId)
+  const modalEdicionAbierto = Boolean(mesaEditando)
 
-  function handleChange(event) {
+  function handleChangeCrear(event) {
     const { name, value } = event.target
 
-    setFormulario((formularioActual) => ({
+    setFormularioCrear((formularioActual) => ({
       ...formularioActual,
       [name]: value,
     }))
   }
 
-  function limpiarFormulario() {
-    setFormulario(estadoInicialFormulario)
-    setMesaEditandoId(null)
-    setErrorFormulario(null)
+  function handleChangeEditar(event) {
+    const { name, value } = event.target
+
+    setFormularioEditar((formularioActual) => ({
+      ...formularioActual,
+      [name]: value,
+    }))
   }
 
-  function validarFormulario() {
+  function validarFormulario(formulario) {
     if (!formulario.numero || Number(formulario.numero) <= 0) {
       return 'El número de la mesa debe ser mayor a 0.'
     }
@@ -53,28 +60,53 @@ function MesasPage() {
       return 'La capacidad debe ser mayor a 0.'
     }
 
-    if (!formulario.ubicacion.trim()) {
-      return 'La ubicación de la mesa es obligatoria.'
+    if (!formulario.ubicacion) {
+      return 'Debes seleccionar una ubicación para la mesa.'
     }
 
     return null
   }
 
-  async function handleSubmit(event) {
+  function prepararMesa(formulario) {
+    return {
+      numero: Number(formulario.numero),
+      capacidad: Number(formulario.capacidad),
+      ubicacion: formulario.ubicacion,
+      estado: formulario.estado,
+    }
+  }
+
+  function limpiarFormularioCrear() {
+    setFormularioCrear(estadoInicialFormulario)
+    setErrorFormulario(null)
+  }
+
+  function abrirModalEditar(mesa) {
+    setMesaEditando(mesa)
+    setFormularioEditar({
+      numero: String(mesa.numero),
+      capacidad: String(mesa.capacidad),
+      ubicacion: mesa.ubicacion,
+      estado: mesa.estado,
+    })
+    setMensaje(null)
+    setErrorEdicion(null)
+  }
+
+  function cerrarModalEditar() {
+    setMesaEditando(null)
+    setFormularioEditar(estadoInicialFormulario)
+    setErrorEdicion(null)
+  }
+
+  async function handleCrearMesa(event) {
     event.preventDefault()
 
-    const errorValidacion = validarFormulario()
+    const errorValidacion = validarFormulario(formularioCrear)
 
     if (errorValidacion) {
       setErrorFormulario(errorValidacion)
       return
-    }
-
-    const mesa = {
-      numero: Number(formulario.numero),
-      capacidad: Number(formulario.capacidad),
-      ubicacion: formulario.ubicacion.trim(),
-      estado: formulario.estado,
     }
 
     try {
@@ -82,15 +114,10 @@ function MesasPage() {
       setMensaje(null)
       setErrorFormulario(null)
 
-      if (estaEditando) {
-        await editarMesa(mesaEditandoId, mesa)
-        setMensaje('Mesa actualizada correctamente.')
-      } else {
-        await agregarMesa(mesa)
-        setMensaje('Mesa creada correctamente.')
-      }
+      await agregarMesa(prepararMesa(formularioCrear))
 
-      limpiarFormulario()
+      setMensaje('Mesa creada correctamente.')
+      limpiarFormularioCrear()
     } catch (error) {
       setErrorFormulario(error.message)
     } finally {
@@ -98,16 +125,30 @@ function MesasPage() {
     }
   }
 
-  function cargarMesaParaEditar(mesa) {
-    setMesaEditandoId(mesa.id)
-    setFormulario({
-      numero: String(mesa.numero),
-      capacidad: String(mesa.capacidad),
-      ubicacion: mesa.ubicacion,
-      estado: mesa.estado,
-    })
-    setMensaje(null)
-    setErrorFormulario(null)
+  async function handleGuardarEdicion(event) {
+    event.preventDefault()
+
+    const errorValidacion = validarFormulario(formularioEditar)
+
+    if (errorValidacion) {
+      setErrorEdicion(errorValidacion)
+      return
+    }
+
+    try {
+      setGuardandoEdicion(true)
+      setMensaje(null)
+      setErrorEdicion(null)
+
+      await editarMesa(mesaEditando.id, prepararMesa(formularioEditar))
+
+      setMensaje('Mesa actualizada correctamente.')
+      cerrarModalEditar()
+    } catch (error) {
+      setErrorEdicion(error.message)
+    } finally {
+      setGuardandoEdicion(false)
+    }
   }
 
   async function handleCambiarBloqueo(mesa) {
@@ -141,8 +182,8 @@ function MesasPage() {
       await eliminar(mesa.id)
       setMensaje(`Mesa ${mesa.numero} eliminada correctamente.`)
 
-      if (mesaEditandoId === mesa.id) {
-        limpiarFormulario()
+      if (mesaEditando?.id === mesa.id) {
+        cerrarModalEditar()
       }
     } catch (error) {
       setErrorFormulario(
@@ -163,9 +204,9 @@ function MesasPage() {
       </header>
 
       <section className="admin-card">
-        <h2>{estaEditando ? 'Editar mesa' : 'Crear nueva mesa'}</h2>
+        <h2>Crear nueva mesa</h2>
 
-        <form className="admin-form" onSubmit={handleSubmit}>
+        <form className="admin-form" onSubmit={handleCrearMesa}>
           <div className="admin-form__grid">
             <div className="admin-field">
               <label htmlFor="numero">Número</label>
@@ -174,8 +215,8 @@ function MesasPage() {
                 name="numero"
                 type="number"
                 min="1"
-                value={formulario.numero}
-                onChange={handleChange}
+                value={formularioCrear.numero}
+                onChange={handleChangeCrear}
                 placeholder="Ej: 1"
               />
             </div>
@@ -187,22 +228,28 @@ function MesasPage() {
                 name="capacidad"
                 type="number"
                 min="1"
-                value={formulario.capacidad}
-                onChange={handleChange}
+                value={formularioCrear.capacidad}
+                onChange={handleChangeCrear}
                 placeholder="Ej: 4"
               />
             </div>
 
             <div className="admin-field">
               <label htmlFor="ubicacion">Ubicación</label>
-              <input
+              <select
                 id="ubicacion"
                 name="ubicacion"
-                type="text"
-                value={formulario.ubicacion}
-                onChange={handleChange}
-                placeholder="Ej: Zona central"
-              />
+                value={formularioCrear.ubicacion}
+                onChange={handleChangeCrear}
+              >
+                <option value="">Selecciona una zona</option>
+
+                {ZONAS_MESA.map((zona) => (
+                  <option key={zona.value} value={zona.value}>
+                    {zona.label}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="admin-field">
@@ -210,8 +257,8 @@ function MesasPage() {
               <select
                 id="estado"
                 name="estado"
-                value={formulario.estado}
-                onChange={handleChange}
+                value={formularioCrear.estado}
+                onChange={handleChangeCrear}
               >
                 <option value={ESTADOS_MESA.DISPONIBLE}>Disponible</option>
                 <option value={ESTADOS_MESA.OCUPADA}>Ocupada</option>
@@ -236,22 +283,8 @@ function MesasPage() {
               type="submit"
               disabled={guardando}
             >
-              {guardando
-                ? 'Guardando...'
-                : estaEditando
-                  ? 'Guardar cambios'
-                  : 'Crear mesa'}
+              {guardando ? 'Guardando...' : 'Crear mesa'}
             </button>
-
-            {estaEditando && (
-              <button
-                className="admin-button admin-button--secondary"
-                type="button"
-                onClick={limpiarFormulario}
-              >
-                Cancelar edición
-              </button>
-            )}
           </div>
         </form>
       </section>
@@ -300,7 +333,7 @@ function MesasPage() {
                         <button
                           className="admin-button admin-button--secondary"
                           type="button"
-                          onClick={() => cargarMesaParaEditar(mesa)}
+                          onClick={() => abrirModalEditar(mesa)}
                         >
                           Editar
                         </button>
@@ -331,6 +364,118 @@ function MesasPage() {
           </div>
         )}
       </section>
+
+      {modalEdicionAbierto && (
+        <div className="admin-modal-backdrop" onClick={cerrarModalEditar}>
+          <div
+            className="admin-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="editar-mesa-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="admin-modal__header">
+              <div>
+                <h2 id="editar-mesa-title">Editar mesa</h2>
+                <p>Modifica los datos de la mesa seleccionada.</p>
+              </div>
+
+              <button
+                className="admin-modal__close"
+                type="button"
+                onClick={cerrarModalEditar}
+                aria-label="Cerrar modal"
+              >
+                ×
+              </button>
+            </div>
+
+            <form className="admin-form" onSubmit={handleGuardarEdicion}>
+              <div className="admin-form__grid">
+                <div className="admin-field">
+                  <label htmlFor="editar-numero">Número</label>
+                  <input
+                    id="editar-numero"
+                    name="numero"
+                    type="number"
+                    min="1"
+                    value={formularioEditar.numero}
+                    onChange={handleChangeEditar}
+                  />
+                </div>
+
+                <div className="admin-field">
+                  <label htmlFor="editar-capacidad">Capacidad</label>
+                  <input
+                    id="editar-capacidad"
+                    name="capacidad"
+                    type="number"
+                    min="1"
+                    value={formularioEditar.capacidad}
+                    onChange={handleChangeEditar}
+                  />
+                </div>
+
+                <div className="admin-field">
+                  <label htmlFor="editar-ubicacion">Ubicación</label>
+                  <select
+                    id="editar-ubicacion"
+                    name="ubicacion"
+                    value={formularioEditar.ubicacion}
+                    onChange={handleChangeEditar}
+                  >
+                    <option value="">Selecciona una zona</option>
+
+                    {ZONAS_MESA.map((zona) => (
+                      <option key={zona.value} value={zona.value}>
+                        {zona.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="admin-field">
+                  <label htmlFor="editar-estado">Estado</label>
+                  <select
+                    id="editar-estado"
+                    name="estado"
+                    value={formularioEditar.estado}
+                    onChange={handleChangeEditar}
+                  >
+                    <option value={ESTADOS_MESA.DISPONIBLE}>Disponible</option>
+                    <option value={ESTADOS_MESA.OCUPADA}>Ocupada</option>
+                    <option value={ESTADOS_MESA.BLOQUEADA}>Bloqueada</option>
+                  </select>
+                </div>
+              </div>
+
+              {errorEdicion && (
+                <p className="admin-message admin-message--error">
+                  {errorEdicion}
+                </p>
+              )}
+
+              <div className="admin-modal__footer">
+                <button
+                  className="admin-button admin-button--secondary"
+                  type="button"
+                  onClick={cerrarModalEditar}
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  className="admin-button admin-button--primary"
+                  type="submit"
+                  disabled={guardandoEdicion}
+                >
+                  {guardandoEdicion ? 'Guardando...' : 'Guardar cambios'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
