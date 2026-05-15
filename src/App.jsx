@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 import ClientLayout from './components/layout/ClientLayout.jsx'
 import AdminLayout from './components/layout/AdminLayout.jsx'
+import ProtectedRoute from './components/layout/ProtectedRoute.jsx'
 
 import HomePage from './pages/client/Home.jsx'
 import ReservationPage from './pages/client/Reserva.jsx'
@@ -27,7 +28,11 @@ function App() {
 
         <Route path="/admin/login" element={<LoginPage />} />
 
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route path="/admin" element={
+          <ProtectedRoute>
+            <AdminLayout />
+          </ProtectedRoute>
+        }>
           <Route index element={<DashboardPage />} />
           <Route path="mesas" element={<MesasPage />} />
           <Route path="reservas" element={<ReservasPage />} />
