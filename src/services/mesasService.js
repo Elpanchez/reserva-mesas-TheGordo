@@ -106,3 +106,22 @@ export async function eliminarMesa(id) {
 
   return true
 }
+
+export const actualizarEstadoMesa = async (mesaId, estado) => {
+  const { data, error } = await supabase
+    .from('mesas')
+    .update({
+      estado,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', mesaId)
+    .select()
+    .single()
+
+  if (error) {
+    console.error('Error actualizando estado mesa:', error)
+    throw error
+  }
+
+  return data
+}

@@ -15,6 +15,10 @@ function TableCard({ mesa, seleccionada, onSelect }) {
     <article
       className={`table-card ${
         seleccionada ? 'table-card--selected' : ''
+      } ${
+        mesa.estado === 'ocupada'
+          ? 'table-card--disabled'
+          : ''
       }`}
     >
       <div className="table-card__top">

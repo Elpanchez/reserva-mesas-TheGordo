@@ -1,19 +1,19 @@
 import { supabase } from '../lib/supabaseClient'
 
-export async function obtenerHorarios() {
+export async function obtenerHorarios(diaSemana) {
   const { data, error } = await supabase
     .from('horarios')
     .select('*')
-    .order('dia_semana', { ascending: true })
-    .order('hora_inicio', { ascending: true })
+    .eq('dia_semana', diaSemana)
+    .eq('activo', true)
+    .maybeSingle()
 
   if (error) {
-    throw new Error(error.message)
+    throw error
   }
 
   return data
 }
-
 export async function obtenerHorariosActivos() {
   const { data, error } = await supabase
     .from('horarios')
