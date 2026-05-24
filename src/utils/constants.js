@@ -4,11 +4,28 @@ export const ESTADOS_MESA = {
   BLOQUEADA: 'bloqueada',
 }
 
+export const ZONAS_MESA = [
+  { value: 'Zona ventana', label: 'Zona ventana' },
+  { value: 'Zona central', label: 'Zona central' },
+  { value: 'Zona familiar', label: 'Zona familiar' },
+  { value: 'Zona exterior', label: 'Zona exterior' },
+]
+
 export const ESTADOS_RESERVA = {
   ACTIVA: 'activa',
   CANCELADA: 'cancelada',
   COMPLETADA: 'completada',
 }
+
+export const DIAS_SEMANA = [
+  { value: 1, label: 'Lunes' },
+  { value: 2, label: 'Martes' },
+  { value: 3, label: 'Miércoles' },
+  { value: 4, label: 'Jueves' },
+  { value: 5, label: 'Viernes' },
+  { value: 6, label: 'Sábado' },
+  { value: 7, label: 'Domingo' },
+]
 
 export const RUTAS = {
   HOME: '/',
