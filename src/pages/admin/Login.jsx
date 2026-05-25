@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import thegordoLogo from '../../assets/thegordoLogo.png'
 
 function LoginPage() {
   const location = useLocation()
@@ -43,7 +44,11 @@ function LoginPage() {
   }
 
   return (
+    <div className="admin-login-page">
     <section className="admin-login">
+      <div className="admin-login__brand">
+        <img src={thegordoLogo} alt="The Gordo" className="admin-login__logo" />
+      </div>
       <h1>Inicio de sesión</h1>
       <p>Acceso exclusivo para administradores.</p>
 
@@ -84,11 +89,13 @@ function LoginPage() {
           className="admin-button admin-button--primary"
           type="submit"
           disabled={cargando || cargandoAuth}
+          style={{ width: '100%', height: '46px', fontSize: '15px' }}
         >
           {cargando ? 'Ingresando...' : 'Ingresar'}
         </button>
       </form>
     </section>
+    </div>
   )
 }
 

@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom'
+import { CheckCircle2 } from 'lucide-react'
 
 function ReservationSuccessPage() {
   const location = useLocation()
@@ -31,7 +32,9 @@ function ReservationSuccessPage() {
 
       <div className="page-content-centered">
         <section className="success-section">
-          <div className="success-icon">✅</div>
+          <div className="success-icon">
+            <CheckCircle2 size={64} strokeWidth={1.5} />
+          </div>
 
           <h1>¡Reserva confirmada!</h1>
 

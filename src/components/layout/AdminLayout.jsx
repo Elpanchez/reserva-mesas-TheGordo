@@ -1,5 +1,6 @@
 import { Link, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import thegordoLogo from '../../assets/thegordoLogo.png'
 
 function AdminLayout() {
   const navigate = useNavigate()
@@ -18,8 +19,13 @@ function AdminLayout() {
   return (
     <div className="admin-layout">
       <aside className="admin-sidebar">
-        <h2>The Gordo</h2>
-        <p>Administrador</p>
+        <div className="admin-sidebar__brand">
+          <img src={thegordoLogo} alt="The Gordo" className="admin-sidebar__logo" />
+          <div>
+            <h2>The Gordo</h2>
+            <p>Administrador</p>
+          </div>
+        </div>
 
         {user && <small>{user.email}</small>}
 

@@ -1,3 +1,5 @@
+import { Users, MapPin } from 'lucide-react'
+
 function TableCard({ mesa, seleccionada, onSelect }) {
   const estadoClase = {
     disponible: 'status--available',
@@ -41,12 +43,16 @@ function TableCard({ mesa, seleccionada, onSelect }) {
 
       <div className="table-card__content">
         <div className="table-card__info">
-          <span>👥</span>
+          <span className="table-card__info-icon">
+            <Users size={16} />
+          </span>
           <strong>{mesa.capacidad} personas</strong>
         </div>
 
         <div className="table-card__info">
-          <span>📍</span>
+          <span className="table-card__info-icon">
+            <MapPin size={16} />
+          </span>
           <strong>{mesa.ubicacion}</strong>
         </div>
       </div>

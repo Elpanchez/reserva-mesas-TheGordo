@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useMemo } from 'react'
+import { CalendarDays, LayoutGrid, Clock } from 'lucide-react'
 import { useReservas } from '../../hooks/useReservas'
 import { ESTADOS_RESERVA, RUTAS } from '../../utils/constants'
 
@@ -67,18 +68,27 @@ function DashboardPage() {
 
       <section className="admin-home-actions">
         <Link className="admin-home-action" to={RUTAS.ADMIN_RESERVAS}>
+          <div className="admin-home-action__icon">
+            <CalendarDays size={22} />
+          </div>
           <span>Reservas</span>
           <strong>Ver y gestionar reservas</strong>
           <p>Consulta, cancela o marca reservas como completadas.</p>
         </Link>
 
         <Link className="admin-home-action" to={RUTAS.ADMIN_MESAS}>
+          <div className="admin-home-action__icon">
+            <LayoutGrid size={22} />
+          </div>
           <span>Mesas</span>
           <strong>Gestionar mesas</strong>
           <p>Crea, edita, bloquea o desbloquea mesas del restaurante.</p>
         </Link>
 
         <Link className="admin-home-action" to={RUTAS.ADMIN_HORARIOS}>
+          <div className="admin-home-action__icon">
+            <Clock size={22} />
+          </div>
           <span>Horarios</span>
           <strong>Gestionar horarios</strong>
           <p>Configura los días y rangos disponibles para reservar.</p>

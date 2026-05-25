@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { UtensilsCrossed } from 'lucide-react'
 import TableCard from '../../components/client/TableCard'
 import { useMesas } from '../../hooks/useMesas'
 
@@ -29,7 +30,7 @@ function HomePage() {
             </div>
 
             <div className="hero-illustration">
-              🍽️
+              <UtensilsCrossed size={160} strokeWidth={1.2} />
             </div>
           </div>
         </section>
