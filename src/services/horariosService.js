@@ -1,19 +1,40 @@
 import { supabase } from '../lib/supabaseClient'
 
-export async function obtenerHorarios(diaSemana) {
+export async function obtenerHorarios() {
   const { data, error } = await supabase
     .from('horarios')
     .select('*')
-    .eq('dia_semana', diaSemana)
+    .order('dia_semana', { ascending: true })
+    .order('hora_inicio', { ascending: true })
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  return data || []
+}
+
+export async function obtenerHorarioPorDia(diaSemana) {
+  const dia = Number(diaSemana)
+
+  if (!Number.isInteger(dia) || dia < 1 || dia > 7) {
+    throw new Error('Día de la semana inválido.')
+  }
+
+  const { data, error } = await supabase
+    .from('horarios')
+    .select('*')
+    .eq('dia_semana', dia)
     .eq('activo', true)
     .maybeSingle()
 
   if (error) {
-    throw error
+    throw new Error(error.message)
   }
 
   return data
 }
+
 export async function obtenerHorariosActivos() {
   const { data, error } = await supabase
     .from('horarios')
@@ -26,7 +47,7 @@ export async function obtenerHorariosActivos() {
     throw new Error(error.message)
   }
 
-  return data
+  return data || []
 }
 
 export async function crearHorario(horario) {

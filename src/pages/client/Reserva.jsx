@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useReservas } from '../../hooks/useReservas'
-import { obtenerHorarios } from '../../services/horariosService'
+import { obtenerHorarioPorDia } from '../../services/horariosService'
 import { obtenerHorasOcupadas, horaDisponible } from '../../services/disponibilidadService'
 import { ESTADOS_RESERVA } from '../../utils/constants'
 
@@ -30,17 +30,10 @@ function ReservationPage() {
     if (!formData.fecha || !mesa) return
 
     try {
-      const fecha = new Date(formData.fecha)
+      const fecha = new Date(`${formData.fecha}T00:00:00`)
+      const diaSemana = fecha.getDay()
 
-      let diaSemana = fecha.getDay()
-
-      if (diaSemana === 0) {
-        diaSemana = 7
-      }
-
-      const horario = await obtenerHorarios(
-        diaSemana
-      )
+      const horario = await obtenerHorarioPorDia(diaSemana)
 
       if (!horario) {
         setHorasDisponibles([])

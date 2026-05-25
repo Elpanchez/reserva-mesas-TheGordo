@@ -1,59 +1,60 @@
-import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
 
 function LoginPage() {
-  const location = useLocation();
-  const from = location.state?.from || "/admin";
-  const navigate = useNavigate();
+  const location = useLocation()
+  const from = location.state?.from || '/admin'
+  const navigate = useNavigate()
   const {
     login,
-    logout,
-    user,
     estaAutenticado,
     cargandoAuth,
     motivoCierreSesion,
-  } = useAuth();
+  } = useAuth()
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
-  const [cargando, setCargando] = useState(false);
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState(null)
+  const [cargando, setCargando] = useState(false)
+
+  useEffect(() => {
+    if (!cargandoAuth && estaAutenticado) {
+      navigate(from, { replace: true })
+    }
+  }, [cargandoAuth, estaAutenticado, from, navigate])
 
   async function handleSubmit(event) {
-    event.preventDefault();
+    event.preventDefault()
 
     try {
-      setError(null);
-      setCargando(true);
+      setError(null)
+      setCargando(true)
 
-      await login(email, password);
+      await login(email, password)
 
-      navigate(from, { replace: true });
+      navigate(from, { replace: true })
     } catch (error) {
-      console.error(error);
-      setError("Correo o contraseña incorrectos.");
+      console.error(error)
+      setError('Correo o contraseña incorrectos.')
     } finally {
-      setCargando(false);
+      setCargando(false)
     }
   }
 
-  if (estaAutenticado) {
-    navigate("/admin");
-  }
-
   return (
-    <section>
+    <section className="admin-login">
       <h1>Inicio de sesión</h1>
       <p>Acceso exclusivo para administradores.</p>
+
       {motivoCierreSesion && (
         <p className="admin-message admin-message--error">
           {motivoCierreSesion}
         </p>
       )}
 
-      <form onSubmit={handleSubmit}>
-        <div>
+      <form className="admin-form" onSubmit={handleSubmit}>
+        <div className="admin-field">
           <label htmlFor="email">Correo electrónico</label>
           <input
             id="email"
@@ -65,7 +66,7 @@ function LoginPage() {
           />
         </div>
 
-        <div>
+        <div className="admin-field">
           <label htmlFor="password">Contraseña</label>
           <input
             id="password"
@@ -77,14 +78,18 @@ function LoginPage() {
           />
         </div>
 
-        {error && <p>{error}</p>}
+        {error && <p className="admin-message admin-message--error">{error}</p>}
 
-        <button type="submit" disabled={cargando}>
-          {cargando ? "Ingresando..." : "Ingresar"}
+        <button
+          className="admin-button admin-button--primary"
+          type="submit"
+          disabled={cargando || cargandoAuth}
+        >
+          {cargando ? 'Ingresando...' : 'Ingresar'}
         </button>
       </form>
     </section>
-  );
+  )
 }
 
-export default LoginPage;
+export default LoginPage
