@@ -391,4 +391,4 @@ Las siguientes funcionalidades están fuera del alcance del proyecto actual y re
 ## Accesos admin pruebas
 | Usuario | Contrasaeña |
 |---|---|
-| admin@thegordo.com | admin |
+| admin@thegordo.com | admin123 |
