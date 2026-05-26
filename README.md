@@ -387,3 +387,8 @@ Las siguientes funcionalidades están fuera del alcance del proyecto actual y re
 - Asignatura: Configuración y Mantenimiento de Software
 
 ---
+
+## Accesos admin pruebas
+| Usuario | Contrasaeña |
+|---|---|
+| admin@thegordo.com | admin |
